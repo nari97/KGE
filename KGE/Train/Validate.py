@@ -24,7 +24,7 @@ def corruptSubjectAndObjects(s, p, o, data):
 
     return torch.LongTensor(list(cs)).to(device), torch.LongTensor(list(co)).to(device)
 
-def validate(loader, modelName, datasetName, validType = 'subset', verbose = False):
+def validate(loader, modelName, datasetName, verbose = False):
     folder = os.getcwd() + "/Datasets/" + datasetName
     loader = loader
 
@@ -35,12 +35,12 @@ def validate(loader, modelName, datasetName, validType = 'subset', verbose = Fal
     
     f = open(os.getcwd() + "/SavedModels//" + modelName + ".pkl", 'rb')
     model = torch.load(f)
+    #print (model.name)
     f.close()
 
     finalDataset = dataset + valid
     
-    if validType == 'subset':
-        valid = valid[:100]
+    valid = valid[:100]
 
     if verbose:
         print ('GY size : ',len(finalDataset))
@@ -59,17 +59,15 @@ def validate(loader, modelName, datasetName, validType = 'subset', verbose = Fal
         s = torch.LongTensor([row[0]]).to(device)
         p = torch.LongTensor([row[2]]).to(device)
         o = torch.LongTensor([row[1]]).to(device)
-                
         
-        sEmb = model.entities(s)
-        pEmb = model.relations(p)
-        oEmb = model.entities(o)
+        
+        sEmb = model.entities(s).repeat(len(cs), 1)
+        pEmb = model.relations(p).repeat(len(cs), 1)
+        oEmb = model.entities(o).repeat(len(cs), 1)
         sDashEmb = model.entities(cs)
-        oDashEmb = model.entities(co)
-
+        #print('Created repeats for cs')
         d1 = model.distance(sEmb, pEmb, oEmb)
         d2 = model.distance(sDashEmb, pEmb, oEmb)
-        d3 = model.distance(sEmb, pEmb, oDashEmb)
 
         rl = d1>d2
         re = (d1 == d2)
@@ -83,6 +81,16 @@ def validate(loader, modelName, datasetName, validType = 'subset', verbose = Fal
             req+=1
         
         r.append((2*rless + req)/2)
+
+        #print('Created repeats for co')
+
+        sEmb = model.entities(s).repeat(len(co), 1)
+        pEmb = model.relations(p).repeat(len(co), 1)
+        oEmb = model.entities(o).repeat(len(co), 1)
+        oDashEmb = model.entities(co)
+        
+        d1 = model.distance(sEmb, pEmb, oEmb)
+        d3 = model.distance(sEmb, pEmb, oDashEmb)
         
         rless = 1
         req = 0
