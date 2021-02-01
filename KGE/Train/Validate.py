@@ -4,6 +4,7 @@ import time
 import os
 
 torch.multiprocessing.freeze_support()
+torch.no_grad()
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 def corruptSubjectAndObjects(s, p, o, data):
@@ -40,7 +41,7 @@ def validate(loader, modelName, datasetName, verbose = False):
 
     finalDataset = dataset + valid
     
-    valid = valid[:100]
+    #valid = valid[:100]
 
     if verbose:
         print ('GY size : ',len(finalDataset))
@@ -60,36 +61,34 @@ def validate(loader, modelName, datasetName, verbose = False):
         p = torch.LongTensor([row[2]]).to(device)
         o = torch.LongTensor([row[1]]).to(device)
         
+        sEmb = model.entities(s)
+        pEmb = model.relations(p)
+        oEmb = model.entities(o)
         
-        sEmb = model.entities(s).repeat(len(cs), 1)
+        d1 = model.distance(sEmb, pEmb, oEmb)
+
         pEmb = model.relations(p).repeat(len(cs), 1)
         oEmb = model.entities(o).repeat(len(cs), 1)
+        
         sDashEmb = model.entities(cs)
-        #print('Created repeats for cs')
-        d1 = model.distance(sEmb, pEmb, oEmb)
+        
+        
         d2 = model.distance(sDashEmb, pEmb, oEmb)
 
         rl = d1>d2
         re = (d1 == d2)
 
-        for val in rl:
-          if val:
-            rless+=1
-
-        for val in re:
-          if val:
-            req+=1
+        rless += torch.sum(rl)
+        req = torch.sum(re)
         
         r.append((2*rless + req)/2)
 
-        #print('Created repeats for co')
-
         sEmb = model.entities(s).repeat(len(co), 1)
         pEmb = model.relations(p).repeat(len(co), 1)
-        oEmb = model.entities(o).repeat(len(co), 1)
+
         oDashEmb = model.entities(co)
         
-        d1 = model.distance(sEmb, pEmb, oEmb)
+        
         d3 = model.distance(sEmb, pEmb, oDashEmb)
         
         rless = 1
@@ -99,13 +98,8 @@ def validate(loader, modelName, datasetName, verbose = False):
         rl = d1>d3
         re = (d1 == d3)
 
-        for val in rl:
-          if val:
-            rless+=1
-
-        for val in re:
-          if val:
-            req+=1
+        rless += torch.sum(rl)
+        req = torch.sum(re)
         
 
         if verbose:
@@ -121,5 +115,5 @@ def validate(loader, modelName, datasetName, verbose = False):
     for rz in r:
         mr += rz
 
-    mr /= len(r)
-    return mr
+    mr /= len(r)    
+    return mr.item()

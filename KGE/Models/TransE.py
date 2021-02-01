@@ -26,7 +26,7 @@ class TransE(nn.Module):
 
     def distance(self, h, r, t):
         data = -torch.norm(h+r-t, dim = 1, p = self.norm)
-        return data.to(device)
+        return data
 
 
     def forward(self, data):
@@ -35,8 +35,6 @@ class TransE(nn.Module):
         t = torch.Tensor(-t)
         t = t.to(device)
 
-        data = torch.LongTensor(data)
-        data = data.to(device)
 
         head = self.entities(data[:, 0])
         tail = self.entities(data[:, 1])

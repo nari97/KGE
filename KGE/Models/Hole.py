@@ -53,16 +53,13 @@ class Hole(nn.Module):
 
     def distanceHole(self, h, r, t):
         
-        
-      
+  
       tks = torch.cat([torch.cat([t[i].roll(k) for k in range(t.shape[1])]).view(t.shape[1], t.shape[1]) for i in range(t.shape[0])]).view(t.shape[0], t.shape[1], t.shape[1])
       his = h.repeat(1, h.shape[1]).view(h.shape[0], h.shape[1], -1)
       tks = tks.to(device)
       his = his.to(device)
 
-      
-
-      m = (his*tks).sum(dim = 2) 
+      m = (his*tks).sum(dim = 2)
       m = m.to(device)
         
       answer = torch.sum(r*m, dim = 1)
@@ -80,12 +77,17 @@ class Hole(nn.Module):
       
       conjH = torch.conj(fourierH)
         
-      inv = torch.fft.irfft(conjH*fourierT, dim = -1)
+      inv = torch.fft.irfft(torch.mul(conjH, fourierT), dim = -1)
       
-      answer = torch.sum(r*inv, dim = 1)
+      if r.shape[1]>inv.shape[1]:
+        r = r[:, :inv.shape[1]]
+      elif inv.shape[1]>r.shape[1]:
+        inv = inv[:, :r.shape[1]]
+       
+      answer = torch.sum(torch.mul(r,inv), dim = 1)
       #answer.requires_grad = True
-
-      return answer.to(device)
+      
+      return answer
 
     def forwardMethod2(self, data):
         t = torch.ones((len(data), 1))
@@ -116,7 +118,8 @@ class Hole(nn.Module):
         t = t.to(device)
 
         #data = torch.LongTensor(data)
-        data = data.to(device)
+        
+        #data = data.to(device)
 
         head = self.entities(data[:, 0])
         tail = self.entities(data[:, 1])

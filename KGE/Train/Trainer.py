@@ -25,8 +25,12 @@ class Trainer:
         self.normalize = normalize
         self.momentum = momentum
 
+
     def corrupt(self, data, entities):
-        
+        '''
+            This function is used to corrupts the data for the nr value
+        '''
+
         corruptedData = []
         for i in range(0, len(data)):
             for j in range(self.nr):
@@ -39,9 +43,14 @@ class Trainer:
                     row = [data[i][0], data[i][1], data[i][2], data[i][0], cT]
                 corruptedData.append(row)
 
-        return torch.LongTensor(corruptedData)
+        return torch.LongTensor(corruptedData).to(device)
 
+    
     def trainHole(self):
+        ''' 
+            Not used
+        '''
+
         modelName = self.model.name
         datasetName = self.datasetName
         modelName = modelName + "_" + datasetName
@@ -68,9 +77,9 @@ class Trainer:
         
         print('Data batched')
         lossFn = nn.MarginRankingLoss(margin = self.margin, reduction = 'mean')
-        lossFn.to(device)
+        lossFn = lossFn.to(device)
         
-        self.model.to(device)
+        self.model = self.model.to(device)
         optim = torch.optim.SGD(self.model.parameters(), lr = self.lr, weight_decay = self.weight_decay, momentum = self.momentum)
         
         #print ('Not repeating')
@@ -123,6 +132,11 @@ class Trainer:
 
     def train(self):
         
+        '''
+            Train first loads the data, then corrupts them, then feeds the data into a loader which is then snet in batches for gradient
+            descent
+        '''
+
         modelName = self.model.name
         datasetName = self.datasetName
         modelName = modelName + "_" + datasetName
@@ -130,31 +144,28 @@ class Trainer:
         prev_mr = 9999999
         mr = 0
 
-        
         entities = self.loader.getEntities()
         relations = self.loader.getRelations()
         dataset = self.loader.getTrainDataset()
         
         print ('Dataset : ', datasetName)
         print ('Model : ', modelName)
-
         print ('Dataset shape : ', len(dataset))
 
         corruptedDataset = self.corrupt(dataset, entities)
 
-        print ('After corruption : ', corruptedDataset.shape)
+        print ('After corruption : ', corruptedDataset.shape)  
         
-        #print('This is repeat')
         traindata = torch.utils.data.DataLoader(corruptedDataset, batch_size = self.batch_size, shuffle = False, num_workers = 0)
         
-        print('Data batched')
-        lossFn = nn.MarginRankingLoss(margin = self.margin, reduction = 'mean')
-        lossFn.to(device)
         
-        self.model.to(device)
+        lossFn = nn.MarginRankingLoss(margin = self.margin, reduction = 'mean')
+        lossFn = lossFn.to(device)
+        
+        self.model = self.model.to(device)
         optim = torch.optim.SGD(self.model.parameters(), lr = self.lr, weight_decay = self.weight_decay, momentum = self.momentum)
         
-        #print ('Not repeating')
+        
         for epoch in range(1,self.epochs+1):
             before = time.time()
             
@@ -162,7 +173,7 @@ class Trainer:
                 self.model.entities.weight.data = nn.functional.normalize(self.model.entities.weight.data, dim = 1)
             
             for i, data in enumerate(traindata):
-                #print(i)
+              with torch.cuda.amp.autocast():
                 
                 optim.zero_grad()
                 ps, ns, t = self.model.forward(data)
@@ -174,8 +185,8 @@ class Trainer:
             after = time.time()
             print ('Epoch :', epoch, " : ", after - before)
             
-
-            if epoch%20 == 0:
+            #Change this for number of epochs before validation
+            if epoch%10 == 1:
                 f = open(os.getcwd() + '/SavedModels//' + modelName + '.pkl', 'wb')
                 torch.save(self.model, f)
                 f.close()
