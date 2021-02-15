@@ -5,6 +5,7 @@ import time
 import torch.fft
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+torch.manual_seed(0)
 
 class Hole(nn.Module):
 

@@ -3,6 +3,7 @@ import torch.nn as nn
 import numpy as np
 
 device = torch.device("cuda:0")
+torch.manual_seed(0)
 
 class Rescal(nn.Module):
   

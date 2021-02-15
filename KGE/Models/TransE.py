@@ -2,8 +2,9 @@ import torch
 import torch.nn as nn
 import numpy as np
 
-torch.multiprocessing.freeze_support()
+
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+torch.manual_seed(0)
 
 class TransE(nn.Module):
 
@@ -25,7 +26,7 @@ class TransE(nn.Module):
         self.relations.weight.data = nn.functional.normalize(self.relations.weight.data, dim = 1)
 
     def distance(self, h, r, t):
-        data = -torch.norm(h+r-t, dim = 1, p = self.norm)
+        data = - torch.norm(h+r-t, dim = 1, p = self.norm)
         return data
 
 
@@ -35,16 +36,13 @@ class TransE(nn.Module):
         t = torch.Tensor(-t)
         t = t.to(device)
 
-
+        
         head = self.entities(data[:, 0])
         tail = self.entities(data[:, 1])
+
         pred = self.relations(data[:, 2])
 
         cHead = self.entities(data[:, 3])
         cTail = self.entities(data[:, 4])
 
-        
-        #print (self.distance(head, pred, tail).shape)
-
-
-        return self.distance(head, pred, tail), self.distance(cHead, pred, cTail), t
+        return self.distance(nn.functional.normalize(head, dim = 1), pred, nn.functional.normalize(tail, dim = 1)), self.distance(nn.functional.normalize(cHead, dim = 1), pred, nn.functional.normalize(cTail, dim = 1)), t
