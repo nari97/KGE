@@ -106,14 +106,12 @@ class Trainer(object):
                         (new_collector.get_metric().is_improved(new_collector.get_expected()) and
                             new_collector.is_significant_expected())):
 
-                    if patient> self.patient_count:
-                        break
-                    patient+=1
+                    
                     print('Previous metric value:', collector.get_metric().get(), " was not improved and is significant")
                     self.finished = True
                     break
                 else:
-                    patient = 0
+                    
                     self.model.model.save_checkpoint(os.path.join(self.checkpoint_dir + ".valid"), epoch=epoch)
                     with open(os.path.join(self.checkpoint_dir + ".ranks"), 'wb') as f:
                         np.save(f, np.array(new_collector.all_ranks))
