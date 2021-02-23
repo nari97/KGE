@@ -94,7 +94,17 @@ class Evaluator(object):
                 scores = self.predict(arrH, arrR, arrT, model)
 
                 rankhLess, ranktLess, rankhEq, ranktEq = 0, 0, 1, 1
+
+                cHeads = scores[1:corruptedHeadsEnd]
+                cTails = scores[corruptedHeadsEnd:]
+                
+                rankhLess = torch.sum(scores[0]>cHeads).item()
+                ranktLess = torch.sum(scores[0]>cTails).item()
+                rankhEq += torch.sum(scores[0] == cHeads).item()
+                ranktEq += torch.sum(scores[0] == cTails).item()
+                
                 for i in range(1, totalTriples):
+                    '''
                     if scores[0] > scores[i]:
                         if i < corruptedHeadsEnd:
                             rankhLess = rankhLess + 1
@@ -105,6 +115,7 @@ class Evaluator(object):
                             rankhEq = rankhEq + 1
                         else:
                             ranktEq = ranktEq + 1
+                    '''
                     if materialize and scores[0] >= scores[i]:
                         self.add_triple(neg_triples, arrH[i], arrR[i], arrT[i], 1)
 
