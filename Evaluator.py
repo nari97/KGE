@@ -79,6 +79,16 @@ class Evaluator(object):
                 arrT[current] = t.t
                 current = current + 1
 
+                arrH[1:1+len(corruptedHeads)] = corruptedHeads
+                arrR[1:1+len(corruptedHeads)] = t.r
+                arrT[1:1+len(corruptedHeads)] = t.t
+
+                corruptedHeadsEnd = len(arrH)
+
+                arrH[1+len(corruptedHeads) : ] = t.h
+                arrR[1+len(corruptedHeads) : ] = t.r
+                arrT[1+len(corruptedHeads) : ] = corruptedTails
+                '''
                 for hPrime in corruptedHeads:
                     arrH[current] = hPrime
                     arrR[current] = t.r
@@ -90,7 +100,7 @@ class Evaluator(object):
                     arrR[current] = t.r
                     arrT[current] = tPrime
                     current = current + 1
-
+                '''
                 scores = self.predict(arrH, arrR, arrT, model)
 
                 rankhLess, ranktLess, rankhEq, ranktEq = 0, 0, 1, 1
