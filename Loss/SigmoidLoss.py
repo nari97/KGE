@@ -1,13 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from Loss import Loss
+from .Loss import Loss
 
-class SoftplusLoss(Loss):
+class SigmoidLoss(Loss):
 
     def __init__(self, adv_temperature=None):
-        super(SoftplusLoss, self).__init__()
-        self.criterion = nn.Softplus()
+        super(SigmoidLoss, self).__init__()
+        self.criterion = nn.LogSigmoid()
         if adv_temperature != None:
             self.adv_temperature = nn.Parameter(torch.Tensor([adv_temperature]))
             self.adv_temperature.requires_grad = False
@@ -20,10 +20,10 @@ class SoftplusLoss(Loss):
 
     def forward(self, p_score, n_score):
         if self.adv_flag:
-            return (self.criterion(-p_score).mean() + (self.get_weights(n_score) * self.criterion(n_score)).sum(
+            return -(self.criterion(p_score).mean() + (self.get_weights(n_score) * self.criterion(-n_score)).sum(
                 dim=-1).mean()) / 2
         else:
-            return (self.criterion(-p_score).mean() + self.criterion(n_score).mean()) / 2
+            return -(self.criterion(p_score).mean() + self.criterion(-n_score).mean()) / 2
 
     def predict(self, p_score, n_score):
         score = self.forward(p_score, n_score)

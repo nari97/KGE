@@ -4,7 +4,7 @@ import torch.optim as optim
 import os
 import time
 import numpy as np
-from Evaluator import RankCollector
+from .Evaluator import RankCollector
 
 class Trainer(object):
 

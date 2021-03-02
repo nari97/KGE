@@ -1,7 +1,7 @@
 import numpy as np
 import random
 import sys
-from DataLoader import DataLoader
+from .DataLoader import DataLoader
 
 class DataSampler(object):
 
