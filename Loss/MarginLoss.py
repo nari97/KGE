@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from Loss import Loss
+from .Loss import Loss
 
 class MarginLoss(Loss):
 

@@ -1,5 +1,5 @@
-from TripleManager import TripleManager
-from ModelUtils import ModelUtils
+from DataLoader.TripleManager import TripleManager
+from .ModelUtils import ModelUtils
 import sys
 import os
 import pickle

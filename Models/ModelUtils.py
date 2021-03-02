@@ -1,20 +1,20 @@
-from Amie import Amie
-from Analogy import Analogy
-from ComplEx import ComplEx
-from DistMult import DistMult
-from HolE import HolE
-from RESCAL import RESCAL
-from RotatE import RotatE
-from SimplE import SimplE
-from TransD import TransD
-from TransE import TransE
-from TransH import TransH
-from TransR import TransR
+from .Amie import Amie
+from .Analogy import Analogy
+from .ComplEx import ComplEx
+from .DistMult import DistMult
+from .HolE import HolE
+from .RESCAL import RESCAL
+from .RotatE import RotatE
+from .SimplE import SimplE
+from .TransD import TransD
+from .TransE import TransE
+from .TransH import TransH
+from .TransR import TransR
 
-from NegativeSampling import NegativeSampling
-from MarginLoss import MarginLoss
-from SigmoidLoss import SigmoidLoss
-from SoftplusLoss import SoftplusLoss
+from Strategy.NegativeSampling import NegativeSampling
+from Loss.MarginLoss import MarginLoss
+from Loss.SigmoidLoss import SigmoidLoss
+from Loss.SoftplusLoss import SoftplusLoss
 
 import os
 import ast

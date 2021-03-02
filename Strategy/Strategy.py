@@ -1,4 +1,4 @@
-from BaseModule import BaseModule
+from Models.BaseModule import BaseModule
 
 class Strategy(BaseModule):
 

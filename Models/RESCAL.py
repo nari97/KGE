@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from Model import Model
+from .Model import Model
 
 class RESCAL(Model):
 

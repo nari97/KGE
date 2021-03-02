@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
-from Model import Model
+from .Model import Model
+import torch.fft
 
-class DistMult(Model):
+class HolE(Model):
 
     def __init__(self, ent_tot, rel_tot, dim=100, margin=None, epsilon=None):
-        super(DistMult, self).__init__(ent_tot, rel_tot)
+        super(HolE, self).__init__(ent_tot, rel_tot)
 
         self.dim = dim
         self.margin = margin
@@ -31,15 +32,61 @@ class DistMult(Model):
                 b=self.embedding_range.item()
             )
 
-    def _calc(self, h, t, r, mode):
+    def _conj(self, tensor):
+        zero_shape = (list)(tensor.shape)
+        one_shape = (list)(tensor.shape)
+        zero_shape[-1] = 1
+        one_shape[-1] -= 1
+        ze = torch.zeros(size=zero_shape, device=tensor.device)
+        on = torch.ones(size=one_shape, device=tensor.device)
+        matrix = torch.cat([ze, on], -1)
+        matrix = 2 * matrix
+        return tensor - matrix * tensor
+
+    def _real(self, tensor):
+        dimensions = len(tensor.shape)
+        return tensor.narrow(dimensions - 1, 0, 1)
+
+    def _imag(self, tensor):
+        dimensions = len(tensor.shape)
+        return tensor.narrow(dimensions - 1, 1, 1)
+
+    def _mul(self, real_1, imag_1, real_2, imag_2):
+        real = real_1 * real_2 - imag_1 * imag_2
+        imag = real_1 * imag_2 + imag_1 * real_2
+        return torch.cat([real, imag], -1)
+
+    def _ccorr(self, a, b):
+        a = self._conj(torch.rfft(a, signal_ndim=1, onesided=False))
+        b = torch.rfft(b, signal_ndim=1, onesided=False)
+        res = self._mul(self._real(a), self._imag(a), self._real(b), self._imag(b))
+        res = torch.ifft(res, signal_ndim=1)
+        return self._real(res).flatten(start_dim=-2)
+
+    def _calc(self, h,r,t, mode):
+    
+      fourierH = torch.fft.rfft(h, dim = -1)
+      fourierT = torch.fft.rfft(t, dim = -1)
+      
+      conjH = torch.conj(fourierH)
+        
+      inv = torch.fft.irfft(torch.mul(conjH, fourierT), dim = -1)
+      
+      if r.shape[1]>inv.shape[1]:
+        r = r[:, :inv.shape[1]]
+      elif inv.shape[1]>r.shape[1]:
+        inv = inv[:, :r.shape[1]]
+       
+      answer = torch.sum(torch.mul(r,inv), dim = -1)
+      
+      return answer.flatten()
+
+    def _calc_old(self, h, t, r, mode):
         if mode != 'normal':
             h = h.view(-1, r.shape[0], h.shape[-1])
             t = t.view(-1, r.shape[0], t.shape[-1])
             r = r.view(-1, r.shape[0], r.shape[-1])
-        if mode == 'head_batch':
-            score = h * (r * t)
-        else:
-            score = (h * r) * t
+        score = self._ccorr(h, t) * r
         score = torch.sum(score, -1).flatten()
         return score
 
@@ -73,4 +120,4 @@ class DistMult(Model):
 
     def predict(self, data):
         score = -self.forward(data)
-        return score.cpu().data.numpy()
+        return score

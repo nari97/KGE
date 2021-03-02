@@ -1,8 +1,8 @@
-from TripleManager import TripleManager
-from Evaluator import Evaluator
-from Trainer import Trainer
-from ModelUtils import ModelUtils
-from Evaluator import RankCollector
+from DataLoader.TripleManager import TripleManager
+from Train.Evaluator import Evaluator
+from Train.Trainer import Trainer
+from Models.ModelUtils import ModelUtils
+from Train.Evaluator import RankCollector
 import numpy as np
 import time
 import sys
@@ -17,7 +17,7 @@ def train():
     #corruption_mode = "LCWA"
 
     folder = ""
-    model_name = "transr"
+    model_name = "rotate"
     dataset = 6
     index = 0
     corruption_mode = "Global"
@@ -66,8 +66,7 @@ def train():
     parameters["wd"] = 4.9340934054962615e-08
     parameters["m"] = 0.7391867872453239
     parameters["trial_index"] = 1
-    parameters["dime"] = 50
-    parameters["dimr"] = 50
+    parameters["dim"] = 50
     parameters["pnorm"] = 1
     parameters["norm"] = True
     parameters["gamma"] = 1

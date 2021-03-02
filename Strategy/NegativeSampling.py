@@ -1,4 +1,4 @@
-from Strategy import Strategy
+from .Strategy import Strategy
 
 class NegativeSampling(Strategy):
 
