@@ -73,21 +73,17 @@ class Evaluator(object):
                 arrR = np.zeros(totalTriples, dtype=np.int64)
                 arrT = np.zeros(totalTriples, dtype=np.int64)
 
-                current = 0
-                arrH[current] = t.h
-                arrR[current] = t.r
-                arrT[current] = t.t
-                current = current + 1
+                arrH[0], arrR[0], arrT[0] = t.h, t.r, t.t
 
-                arrH[1:1+len(corruptedHeads)] = corruptedHeads
+                arrH[1:1+len(corruptedHeads)] = list(corruptedHeads)
                 arrR[1:1+len(corruptedHeads)] = t.r
                 arrT[1:1+len(corruptedHeads)] = t.t
 
                 corruptedHeadsEnd = len(arrH)
 
-                arrH[1+len(corruptedHeads) : ] = t.h
-                arrR[1+len(corruptedHeads) : ] = t.r
-                arrT[1+len(corruptedHeads) : ] = corruptedTails
+                arrH[1+len(corruptedHeads):] = t.h
+                arrR[1+len(corruptedHeads):] = t.r
+                arrT[1+len(corruptedHeads):] = list(corruptedTails)
                 '''
                 for hPrime in corruptedHeads:
                     arrH[current] = hPrime
