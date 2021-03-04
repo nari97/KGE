@@ -9,6 +9,8 @@ class MarginLoss(Loss):
         super(MarginLoss, self).__init__()
         self.margin = nn.Parameter(torch.Tensor([margin]))
         self.margin.requires_grad = False
+        self.loss = nn.MarginRankingLoss(margin)
+        
         if adv_temperature != None:
             self.adv_temperature = nn.Parameter(torch.Tensor([adv_temperature]))
             self.adv_temperature.requires_grad = False
@@ -20,11 +22,15 @@ class MarginLoss(Loss):
         return F.softmax(-n_score * self.adv_temperature, dim=-1).detach()
 
     def forward(self, p_score, n_score):
+        #print (p_score.shape)
         if self.adv_flag:
             return (self.get_weights(n_score) * torch.max(p_score - n_score, -self.margin)).sum(
                 dim=-1).mean() + self.margin
         else:
-            return (torch.max(p_score - n_score, -self.margin)).mean() + self.margin
+            t = torch.ones((len(p_score), 1))
+            ones = torch.Tensor(-t)
+
+            return self.loss(p_score, n_score, ones)
 
     def predict(self, p_score, n_score):
         score = self.forward(p_score, n_score)
