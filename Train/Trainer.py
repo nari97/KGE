@@ -98,7 +98,7 @@ class Trainer(object):
                     start = time.perf_counter()
                     new_collector = self.validation.evaluate(self.model.model)
                     end = time.perf_counter()
-                    print("Validation metric: ", new_collector.get_metric(metric_str = "mr").get(), "; Time:", end-start)
+                    print("Validation metric: ", new_collector.get_metric(metric_str = "mrh").get(), "; Time:", end-start)
 
                 # If the new collector did not significantly improve the previous one or random, stop!
                 if collector is not None and ((new_collector.get_metric().is_improved(collector.get_metric()) and
