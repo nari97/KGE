@@ -32,14 +32,8 @@ class DistMult(Model):
             )
 
     def _calc(self, h, t, r, mode):
-        if mode != 'normal':
-            h = h.view(-1, r.shape[0], h.shape[-1])
-            t = t.view(-1, r.shape[0], t.shape[-1])
-            r = r.view(-1, r.shape[0], r.shape[-1])
-        if mode == 'head_batch':
-            score = h * (r * t)
-        else:
-            score = (h * r) * t
+        
+        score = (h * r) * t
         score = torch.sum(score, -1).flatten()
         return score
 
@@ -73,4 +67,4 @@ class DistMult(Model):
 
     def predict(self, data):
         score = -self.forward(data)
-        return score.cpu().data.numpy()
+        return score.cpu()

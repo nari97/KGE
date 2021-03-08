@@ -17,7 +17,7 @@ def train():
     #corruption_mode = "LCWA"
 
     folder = ""
-    model_name = "rotate"
+    model_name = "transd"
     dataset = 6
     index = 0
     corruption_mode = "Global"
@@ -60,13 +60,14 @@ def train():
     '''
 
     parameters = {}
-    parameters["nbatches"] = 231
-    parameters["nr"] = 1
+    parameters["nbatches"] = 200
+    parameters["nr"] = 3
     parameters["lr"] = 0.8678979498146744
     parameters["wd"] = 4.9340934054962615e-08
     parameters["m"] = 0.7391867872453239
     parameters["trial_index"] = 1
-    parameters["dim"] = 50
+    parameters["dimr"] = 50
+    parameters["dime"] = 50
     parameters["pnorm"] = 1
     parameters["norm"] = True
     parameters["gamma"] = 1
