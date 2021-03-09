@@ -58,7 +58,10 @@ class TransR(Model):
             self.margin_flag = False
 
     def _calc(self, h, t, r, m, mode):
-        
+        h = nn.functional.normalize(h, p = 2, dim = -1)
+        r = nn.functional.normalize(r, p = 2, dim = -1)
+        t = nn.functional.normalize(t, p = 2, dim = -1)
+
         m = m.view(m.shape[0], self.dimsE, self.dimsR)
 
         hr = h.repeat((1, 1, m.shape[-1])).reshape(h.shape[0], h.shape[1], m.shape[-1])

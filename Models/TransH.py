@@ -50,6 +50,9 @@ class TransH(Model):
             self.margin_flag = False
 
     def _calc(self, h, t, r, w_r, mode):
+        h = F.normalize(h, p = 2, dim = -1)
+        t = F.normalize(t, p = 2, dim = -1)
+        w_r = F.normalize(w_r, p = 2, dim = -1)
         
         ht = h - torch.sum(h*w_r, dim = -1, keepdim = True).repeat(1, self.dim)*w_r
         tt = t - torch.sum(t*w_r, dim = -1, keepdim = True).repeat(1, self.dim)*w_r

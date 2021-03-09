@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from .Model import Model
-
+import torch.nn.functional as F
 class DistMult(Model):
 
     def __init__(self, ent_tot, rel_tot, dim=100, margin=None, epsilon=None):
@@ -32,7 +32,9 @@ class DistMult(Model):
             )
 
     def _calc(self, h, t, r, mode):
-        
+        h = F.normalize(h, p = 2, dim = -1)
+        r = F.normalize(r, p = 2, dim = -1)
+        t = F.normalize(t, p = 2, dim = -1)
         score = (h * r) * t
         score = torch.sum(score, -1).flatten()
         return score

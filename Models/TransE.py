@@ -52,7 +52,8 @@ class TransE(Model):
             self.margin_flag = False
 
     def _calc(self, h, t, r, mode):
-        
+        h = F.normalize(h, p = 2, dim = -1)
+        t = F.normalize(t, p = 2, dim = -1)
         return -torch.norm(h+r-t, dim = -1, p = self.p_norm)
 
     def startingBatch(self):
