@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from .Model import Model
 import torch.fft
+import torch.nn.functional as F
 
 class HolE(Model):
 
@@ -64,7 +65,10 @@ class HolE(Model):
         return self._real(res).flatten(start_dim=-2)
 
     def _calc(self, h,r,t, mode):
-    
+      h = F.normalize(h,p = 2, dim = -1)
+      r = F.normalize(r, p = 2, dim = -1)
+      t = F.normalize(t, p = 2, dim = -1)
+
       fourierH = torch.fft.rfft(h, dim = -1)
       fourierT = torch.fft.rfft(t, dim = -1)
       

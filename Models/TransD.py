@@ -64,7 +64,7 @@ class TransD(Model):
     def _calc(self, h, t, r, mode):
         if self.norm_flag:
             #h = F.normalize(h, 2, -1)
-            r = F.normalize(r, 2, -1)
+            r = F.normalize(r, p = 2, dim = -1)
             #t = F.normalize(t, 2, -1)
         #print(h.shape, r.shape, t.shape)
         score = h + r - t
