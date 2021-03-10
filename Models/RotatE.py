@@ -49,7 +49,7 @@ class RotatE(Model):
 
         tr = torch.stack((real, img), dim = -1)
       
-        data = -torch.norm(self.multiply(th, tr) - tt, dim = 1, p = 2)
+        data = -torch.norm(self.multiply(th, tr) - tt, dim = -1, p = 2)
 
         return data.flatten()
     
@@ -74,7 +74,7 @@ class RotatE(Model):
             return score
 
     def predict(self, data):
-        score = -self.forward(data)
+        score = self.forward(data)
         return score
 
     def regularization(self, data):

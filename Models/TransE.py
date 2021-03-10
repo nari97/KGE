@@ -70,10 +70,8 @@ class TransE(Model):
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
         score = self._calc(h, t, r, mode)
-        if self.margin_flag:
-            return self.margin - score
-        else:
-            return score
+        
+        return score
 
     def regularization(self, data):
         batch_h = data['batch_h']
@@ -89,8 +87,4 @@ class TransE(Model):
 
     def predict(self, data):
         score = self.forward(data)
-        if self.margin_flag:
-            score = self.margin - score
-            return score
-        else:
-            return score
+        return score

@@ -75,10 +75,8 @@ class TransH(Model):
         r_norm = self.norm_vector(batch_r)
         
         score = self._calc(h, t, r, r_norm, mode)
-        if self.margin_flag:
-            return self.margin - score
-        else:
-            return score
+        
+        return score
 
     def regularization(self, data):
         batch_h = data['batch_h']
@@ -96,8 +94,5 @@ class TransH(Model):
 
     def predict(self, data):
         score = self.forward(data)
-        if self.margin_flag:
-            score = self.margin - score
-            return score
-        else:
-            return score
+        
+        return score
