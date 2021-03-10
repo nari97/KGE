@@ -23,7 +23,7 @@ class SigmoidLoss(Loss):
             return -(self.criterion(p_score).mean() + (self.get_weights(n_score) * self.criterion(-n_score)).sum(
                 dim=-1).mean()) / 2
         else:
-             return -(self.criterion(p_score).mean() + self.criterion(-n_score).mean()) / 2
+             return -(self.criterion(p_score).mean() + self.criterion(-n_score).mean())
 
     def predict(self, p_score, n_score):
         score = self.forward(p_score, n_score)
