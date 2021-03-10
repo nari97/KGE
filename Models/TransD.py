@@ -69,7 +69,7 @@ class TransD(Model):
         #print(h.shape, r.shape, t.shape)
         score = h + r - t
 
-        score = torch.norm(score, self.p_norm, -1).flatten()
+        score = -torch.norm(score, self.p_norm, -1).flatten()
         return score
 
     def _transfer(self, e, e_transfer, r_transfer):
@@ -107,10 +107,7 @@ class TransD(Model):
         
         score = self._calc(h, t, r, mode)
 
-        if self.margin_flag:
-            return self.margin - score
-        else:
-            return score
+        return score
 
     def regularization(self, data):
         batch_h = data['batch_h']
@@ -132,8 +129,4 @@ class TransD(Model):
 
     def predict(self, data):
         score = self.forward(data)
-        if self.margin_flag:
-            score = self.margin - score
-            return score
-        else:
-            return score
+        return score

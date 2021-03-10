@@ -123,5 +123,5 @@ class HolE(Model):
         return (self.ent_embeddings.weight.norm(p=3) ** 3 + self.rel_embeddings.weight.norm(p=3) ** 3)
 
     def predict(self, data):
-        score = -self.forward(data)
+        score = self.forward(data)
         return score
