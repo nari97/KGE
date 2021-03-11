@@ -48,9 +48,12 @@ class RotatE(Model):
         img = torch.sin(r)
 
         tr = torch.stack((real, img), dim = -1)
-      
-        data = -torch.norm(self.multiply(th, tr) - tt, dim = -1, p = 2)
+        
+        inner = self.multiply(th, tr) - tt
+        inner = inner.reshape(inner.shape[0], -1)
 
+        data = -torch.norm(inner, dim = -1, p = 2)
+        #print (data.shape)
         return data.flatten()
     
 
@@ -66,12 +69,9 @@ class RotatE(Model):
         h = self.ent_embeddings(batch_h)
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
-        #print ('r', r.shape)
+
         score = self._calc(h, t, r, mode)
-        if self.margin_flag:
-            return self.margin - score
-        else:
-            return score
+        return score
 
     def predict(self, data):
         score = self.forward(data)

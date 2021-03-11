@@ -15,3 +15,15 @@ class Model(BaseModule):
 
     def predict(self):
         raise NotImplementedError
+
+    def checkForPositives(self, data):
+        pos = 0
+        neg = 0
+
+        for i in range(len(data)):
+            if data[i]>=0:
+                pos+=1
+            else:
+                neg+=1
+
+        print (pos, neg)

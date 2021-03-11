@@ -73,15 +73,15 @@ class HolE(Model):
       fourierT = torch.fft.rfft(t, dim = -1)
       
       conjH = torch.conj(fourierH)
-        
-      inv = torch.fft.irfft(torch.mul(conjH, fourierT), dim = -1)
+      
+      inv = torch.fft.irfft(conjH*fourierT, dim = -1)
       
       if r.shape[1]>inv.shape[1]:
         r = r[:, :inv.shape[1]]
       elif inv.shape[1]>r.shape[1]:
         inv = inv[:, :r.shape[1]]
        
-      answer = torch.sum(torch.mul(r,inv), dim = -1)
+      answer = torch.sum(r*inv, dim = -1)
       
       return answer.flatten()
 
@@ -107,6 +107,7 @@ class HolE(Model):
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
         score = self._calc(h, t, r, mode)
+        
         return score
 
     def regularization(self, data):
