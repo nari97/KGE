@@ -35,6 +35,8 @@ class DistMult(Model):
         h = F.normalize(h, p = 2, dim = -1)
         r = F.normalize(r, p = 2, dim = -1)
         t = F.normalize(t, p = 2, dim = -1)
+
+        
         score = (h * r) * t
         score = torch.sum(score, -1).flatten()
         return score
@@ -52,6 +54,7 @@ class DistMult(Model):
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
         score = self._calc(h, t, r, mode)
+        
         return score
 
     def regularization(self, data):

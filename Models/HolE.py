@@ -106,6 +106,7 @@ class HolE(Model):
         h = self.ent_embeddings(batch_h)
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
+        
         score = self._calc(h, t, r, mode)
         
         return score
@@ -124,5 +125,5 @@ class HolE(Model):
         return (self.ent_embeddings.weight.norm(p=3) ** 3 + self.rel_embeddings.weight.norm(p=3) ** 3)
 
     def predict(self, data):
-        score = self.forward(data)
+        score = -self.forward(data)
         return score

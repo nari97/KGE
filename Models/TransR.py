@@ -109,5 +109,5 @@ class TransR(Model):
         return regul
 
     def predict(self, data):
-        score = self.forward(data)
+        score = -self.forward(data)
         return score
