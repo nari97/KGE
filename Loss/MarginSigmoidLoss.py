@@ -29,9 +29,9 @@ class MarginSigmoidLoss(Loss):
                 dim=-1).mean() + self.margin
         else:
             t = torch.ones((len(p_score), 1))
-            ones = torch.Tensor(-t)
+            ones = torch.Tensor(t)
 
-            return self.loss(self.sigmoid(n_score), self.sigmoid(p_score), ones)
+            return self.loss(self.sigmoid(p_score), self.sigmoid(n_score), ones)
 
     def predict(self, p_score, n_score):
         score = self.forward(p_score, n_score)

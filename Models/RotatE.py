@@ -74,7 +74,7 @@ class RotatE(Model):
         return score
 
     def predict(self, data):
-        score = self.forward(data)
+        score = -self.forward(data)
         return score
 
     def regularization(self, data):

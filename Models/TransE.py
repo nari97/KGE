@@ -70,7 +70,6 @@ class TransE(Model):
         t = self.ent_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
         score = self._calc(h, t, r, mode)
-        
         return score
 
     def regularization(self, data):
@@ -86,5 +85,5 @@ class TransE(Model):
         return regul
 
     def predict(self, data):
-        score = self.forward(data)
+        score = -self.forward(data)
         return score
