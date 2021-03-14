@@ -28,7 +28,7 @@ class MarginLoss(Loss):
                 dim=-1).mean() + self.margin
         else:
             t = torch.ones((len(p_score), 1))
-            ones = torch.Tensor(-t)
+            ones = torch.Tensor(t)
 
             return self.loss(p_score, n_score, ones)
 
