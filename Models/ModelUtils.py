@@ -17,6 +17,7 @@ from Loss.SigmoidLoss import SigmoidLoss
 from Loss.SoftplusLoss import SoftplusLoss
 from Loss.MarginSigmoidLoss import MarginSigmoidLoss
 from Loss.NegativeSamplingLoss import NegativeSamplingLoss
+from Loss.NLLLoss import NLLLoss
 
 import os
 import ast
@@ -127,12 +128,12 @@ class ModelUtils:
             m = Amie()
 
         if self.model_name == "transe" or self.model_name == "transh" or self.model_name == "transd" or \
-                self.model_name == "rescal":
+                self.model_name == "rescal" or self.model_name == "transr":
             loss=MarginLoss(margin=self.params["gamma"])
         elif self.model_name == 'hole':
             loss = MarginSigmoidLoss(margin = self.params["gamma"])
         elif self.model_name == "rotate":
-            loss=NegativeSamplingLoss(margin = self.params["gamma"])
+            loss = NegativeSamplingLoss(margin = self.params["gamma"])
         else:
             loss=SoftplusLoss()
         return NegativeSampling(
