@@ -31,7 +31,7 @@ def run():
 
     parameters = get_params()
 
-    #models = ["transe", "transh", "transd", "rescal", "distmult", "complex", "hole", "simple", "analogy", "rotate"]
+    #models = ["transe", "transh", "transd", "rescal", "distmult", "complex", "hole", "simple", "analogy", "rotate", "transr"]
     #datasets = [0, 1, 2, 3, 4, 5, 6, 7]
     # TODO Remove!
     models = ["transe"]
@@ -173,7 +173,7 @@ def next_trials(ax_client, folder, m, d, n=None):
             pickle.dump(trial_params, f, pickle.HIGHEST_PROTOCOL)
 
     return 'sbatch --array=' + (str(init) + '-' + str(end) if end > init else str(init)) + \
-           (' --mem=30000 ' if m == "rescal" else '') + ' run_train.sh /home/crrvcs/OpenKE/ ' + m + ' ' + str(d)
+           (' --mem=30000 ' if m == "rescal" else '') + ' run_train.sh /home/crrvcs/KGE/ ' + m + ' ' + str(d)
 
 def trials_in_parallel(ax_client):
     (num_trials, max_setting) = ax_client.get_max_parallelism()[0]
@@ -186,9 +186,11 @@ def get_parameters(parameters, model_name):
     params = ["lr", "nr", "bern", "nbatches", "wd", "m"]
     if model_name == "transd":
         params = params + ["dime", "dimr"]
+    elif model_name == "transr":
+        params = params + ["dime" , "dimr"]
     else:
         params = params + ["dim"]
-    if model_name.startswith("trans"):
+    if model_name.startswith("trans") or model_name == "hole" or model_name == "rotate":
         params = params + ["pnorm", "gamma", "norm"]
     if model_name == "rescal":
         params = params + ["gamma"]
@@ -202,6 +204,8 @@ def get_parameter_constraints(model_name):
     if model_name == "transd":
         # TransD does not work when dimr > dime
         ret.append("dime >= dimr")
+    if model_name == "transr":
+        ret.append("dime != dimr")
     return ret
 
 if __name__ == '__main__':
