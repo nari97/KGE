@@ -36,7 +36,7 @@ class SimplE(Model):
         t = self.ent_t_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
         r_inv = self.rel_inv_embeddings(batch_r)
-        score = self._calc_avg(h, t, r, r_inv)
+        score = self._calc_avg(h, t, r, r_inv).flatten()
         return torch.clamp(score,-20, 20)
 
     def regularization(self, data):
