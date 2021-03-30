@@ -46,7 +46,7 @@ class Analogy(Model):
         r_re = self.rel_re_embeddings(batch_r)
         r_im = self.rel_im_embeddings(batch_r)
         r = self.rel_embeddings(batch_r)
-        score = self._calc(h_re, h_im, h, t_re, t_im, t, r_re, r_im, r)
+        score = self._calc(h_re, h_im, h, t_re, t_im, t, r_re, r_im, r).flatten()
         return score
 
     def regularization(self, data):
@@ -75,4 +75,4 @@ class Analogy(Model):
 
     def predict(self, data):
         score = -self.forward(data)
-        return score.cpu().data.numpy()
+        return score
