@@ -192,7 +192,7 @@ def get_parameters(parameters, model_name):
         params = params + ["dim"]
     if model_name.startswith("trans") or model_name == "hole" or model_name == "rotate":
         params = params + ["pnorm", "gamma", "norm"]
-    if model_name == "rescal" or model_name == 'distmult' or model_name == 'complex' or model_name == 'simple':
+    if model_name == "rescal" or model_name == 'distmult' or model_name == 'complex' or model_name == 'simple' or model_name == 'analogy':
         params = params + ["gamma"]
     ret = []
     for p in params:

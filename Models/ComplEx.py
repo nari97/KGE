@@ -40,7 +40,7 @@ class ComplEx(Model):
         t_im = self.ent_im_embeddings(batch_t)
         r_re = self.rel_re_embeddings(batch_r)
         r_im = self.rel_im_embeddings(batch_r)
-        score = self._calc(h_re, h_im, t_re, t_im, r_re, r_im)
+        score = self._calc(h_re, h_im, t_re, t_im, r_re, r_im).flatten()
         return score
 
     def regularization(self, data):
