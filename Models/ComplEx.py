@@ -63,4 +63,4 @@ class ComplEx(Model):
 
     def predict(self, data):
         score = -self.forward(data)
-        return score.cpu().data.numpy()
+        return score

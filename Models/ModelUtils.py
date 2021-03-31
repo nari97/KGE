@@ -130,12 +130,20 @@ class ModelUtils:
         if self.model_name == "transe" or self.model_name == "transh" or self.model_name == "transd" or \
                 self.model_name == "rescal" or self.model_name == "transr":
             loss=MarginLoss(margin=self.params["gamma"])
-        elif self.model_name == 'hole':
+            print ('Loss : Margin Loss')
+        elif self.model_name == 'hole' or self.model_name == 'distmult':
             loss = MarginSigmoidLoss(margin = self.params["gamma"])
+            print ('Loss : Margin Sigmoid Loss')
         elif self.model_name == "rotate":
             loss = NegativeSamplingLoss(margin = self.params["gamma"])
+            print ('Loss : Negative Sampling Loss')
+        elif self.model_name == "analogy":
+            print ('Loss : Sigmoid Loss')
+            loss = SigmoidLoss()
         else:
-            loss=SoftplusLoss()
+            print ('Loss : Softplus Loss')
+            loss = SoftplusLoss()
+        
         return NegativeSampling(
                     model=m,
                     loss=loss,
