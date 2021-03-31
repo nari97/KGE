@@ -18,8 +18,8 @@ class SimplE(Model):
         nn.init.xavier_uniform_(self.rel_embeddings.weight.data)
         nn.init.xavier_uniform_(self.rel_inv_embeddings.weight.data)
 
-    def _calc_avg(self, h, t, r, r_inv):
-        return (torch.sum(h * r * t, -1) + torch.sum(h * r_inv * t, -1))/2
+    def _calc_avg(self, h_i, t_i, h_j, t_j, r, r_inv):
+        return (torch.sum(h_i * r * t_j, -1) + torch.sum(h_j * r_inv * t_i, -1))/2
 
     def _calc_ingr(self, h, r, t):
         return torch.sum(h * r * t, -1)
@@ -32,12 +32,17 @@ class SimplE(Model):
         batch_h = data['batch_h']
         batch_t = data['batch_t']
         batch_r = data['batch_r']
-        h = self.ent_h_embeddings(batch_h)
-        t = self.ent_t_embeddings(batch_t)
+
+        h_i = self.ent_h_embeddings(batch_h)
+        h_j = self.ent_h_embeddings(batch_t)
+        t_i = self.ent_t_embeddings(batch_h)
+        t_j = self.ent_t_embeddings(batch_t)
+
         r = self.rel_embeddings(batch_r)
         r_inv = self.rel_inv_embeddings(batch_r)
-        score = self._calc_avg(h, t, r, r_inv).flatten()
-        return torch.clamp(score,-20, 20)
+        
+        score = self._calc_avg(h_i, t_i,h_j, t_j, r, r_inv).flatten()
+        return score
 
     def regularization(self, data):
         batch_h = data['batch_h']
@@ -58,4 +63,4 @@ class SimplE(Model):
         t = self.ent_t_embeddings(batch_t)
         r = self.rel_embeddings(batch_r)
         score = -self._calc_ingr(h, r, t)
-        return torch.clamp(score,-20, 20)
+        return score

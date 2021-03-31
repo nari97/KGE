@@ -142,7 +142,8 @@ class ModelUtils:
             loss = SigmoidLoss()
         else:
             print ('Loss : Softplus Loss')
-            loss=SoftplusLoss()
+            loss = SoftplusLoss()
+        
         return NegativeSampling(
                     model=m,
                     loss=loss,
