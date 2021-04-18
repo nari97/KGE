@@ -1,6 +1,6 @@
-from TripleManager import TripleManager
-from Evaluator import Evaluator
-from ModelUtils import ModelUtils
+from DataLoader.TripleManager import TripleManager
+from Train.Evaluator import Evaluator
+from Models.ModelUtils import ModelUtils
 import time
 import sys
 import glob
@@ -16,10 +16,10 @@ if __name__ == '__main__':
     #corruption_mode = "LCWA"
 
     folder = ""
-    model_name = "amie"
-    dataset = 0
+    model_name = "transh"
+    dataset = 6
     type = "test"
-    corruption_mode = "Global"
+    corruption_mode = "LCWA"
 
     dataset_name = ""
     if dataset == 0:
@@ -84,7 +84,6 @@ if __name__ == '__main__':
         pending = pending-1
 
         file = model_file.replace('.model', '.'+type)
-
         # Check if the file already exists
         if os.path.isfile(file):
             # Read rc
