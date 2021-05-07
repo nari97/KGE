@@ -77,8 +77,8 @@ class TransD(Model):
         wr = r_transfer.T
         wh = e_transfer
         et = e.T
-
-        mat = torch.matmul(torch.matmul(wr, wh), et)
+        m = torch.matmul(wr, wh)
+        mat = torch.matmul(m + torch.eye(m.shape[0], m.shape[1]), et)
 
         return F.normalize(mat.T, p=2, dim=-1)
 
