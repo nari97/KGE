@@ -62,14 +62,12 @@ class TransD(Model):
     
 
     def _calc(self, h, t, r, mode):
-        if self.norm_flag:
-            #h = F.normalize(h, 2, -1)
-            r = F.normalize(r, p = 2, dim = -1)
-            #t = F.normalize(t, 2, -1)
-        #print(h.shape, r.shape, t.shape)
+        
+        r = F.normalize(r, p = 2, dim = -1)
+        
         score = h + r - t
 
-        score = -torch.norm(score, self.p_norm, -1).flatten()
+        score = -torch.pow(torch.norm(score, 2, -1),2).flatten()
         return score
 
     def _transfer(self, e, e_transfer, r_transfer):
@@ -79,8 +77,8 @@ class TransD(Model):
         wr = r_transfer.T
         wh = e_transfer
         et = e.T
-
-        mat = torch.matmul(torch.matmul(wr, wh), et)
+        m = torch.matmul(wr, wh)
+        mat = torch.matmul(m + torch.eye(m.shape[0], m.shape[1]), et)
 
         return F.normalize(mat.T, p=2, dim=-1)
 
